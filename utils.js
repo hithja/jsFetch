@@ -11,35 +11,9 @@ const { execSync } = require('child_process');
 
 const host = chalk.blue(`${os.userInfo([]).username}` + chalk.white('@') + `${os.hostname()}`);
 
-function getOSName(platform, release) {
-    switch (platform) {
-        case 'win32':
-            let vers = release.split('.');
-            switch (vers[0]) {
-                case '10':
-                    switch (vers[2]) {
-                        case '22621':
-                        case '22631':
-                        case '26100':
-                            return 'Windows 11';
-                        case '18363':
-                        case '18362':
-                        case '17763':
-                        case '17134':
-                        case '16299':
-                        case '15063':
-                        case '14393':
-                            return 'Windows 10';
-                    }
-                    break;
-            }
-            break;
-        case 'darwin':
-            return 'MacOS';
-            break;
-        case 'linux':
-            break;
-    }
+function getOSName(i) {
+    arr = os.version().split(' ')[i];
+    return arr;
 }
 
 function getHr(host) {
@@ -51,15 +25,14 @@ function getHr(host) {
     return hr;
 }
 
-function getOSLogo(os) {
-    let p;
-    let str;
+function getOSLogo(os, vers) {
     try {
-        p = path.join(__dirname, 'logos', `${os}.lg`);
-        str = fs.readFileSync(p, {encoding: 'utf-8'})
-        return "\u001b[" + str + "\u001b[0m";
+        const p = path.join(__dirname, `logos/${os}`, `${vers}.lg`);
+        let str = fs.readFileSync(p, { encoding: 'utf-8' });
+
+        return `\x1b[${str}`;
     } catch (error) {
-        return error;
+        return chalk.red(`Cannot load logo ¯\\_(ツ)_/¯. Error: ${error}`);
     }
 }
 
